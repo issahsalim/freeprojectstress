@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admissions - UENR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    
+<style>
+    nav {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin: 0 auto;
+  padding: 0.7rem 0;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #004b00;
+}
+
+.logo img {
+  width: 25px;
+}
+
+.nav-links {
+  display: flex;
+  list-style-type: none;
+  gap: 4rem;
+  align-items: center;
+  }
+
+.menu-bar {
+  display: none;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.menu-bar .bar {
+  width: 35px;
+  height: 4px;
+  background-color: #004b00;
+  border-radius: 10px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #004b00;
+  font-weight: 400;
+}
+
+.nav-links a:hover {
+  padding-bottom: 0.05rem;
+  border-bottom: 2px solid #004b00;
+}
+</style>
+      <nav>
+            <div class="logo">
+                <img src="assets/uenr-logo.png" alt="Uenr Logo">
+                <h2>UENR</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="academics.html">Academics</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="menu-bar">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </nav>
+        
+
+  <!-- Hero Section -->
+  <section class="bg-green-700 text-white py-20 text-center px-6">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Admissions at UENR</h1>
+    <p class="text-lg md:text-xl max-w-2xl mx-auto">
+      Start your academic journey with us — apply for undergraduate, postgraduate, or diploma programs.
+    </p>
+  </section>
+
+  <!-- Admission Info -->
+  <section class="py-16 px-6 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-green-700 mb-8 text-center">Admission Requirements</h2>
+    
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <h3 class="text-xl font-semibold text-green-600 mb-2">🎓 Undergraduate Programs</h3>
+        <ul class="list-disc list-inside text-lg space-y-1">
+          <li>WASSCE/SSSCE holders with credits in 6 subjects including English, Math, and Science.</li>
+          <li>GCE holders with at least 5 passes at O-Level and 2 at A-Level.</li>
+          <li>Diploma holders may be admitted into Level 200.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold text-green-600 mb-2">📚 Postgraduate Programs</h3>
+        <ul class="list-disc list-inside text-lg space-y-1">
+          <li>First degree with at least Second Class Lower from a recognized university.</li>
+          <li>Research proposal for MPhil/PhD applicants.</li>
+          <li>Relevant work experience (optional but recommended).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Application Process -->
+  <section class="bg-white py-16 px-6 max-w-5xl mx-auto text-center">
+    <h2 class="text-3xl font-bold text-green-700 mb-8">How to Apply</h2>
+    <ol class="list-decimal list-inside text-lg max-w-3xl mx-auto text-left space-y-4">
+      <li>Purchase an E-voucher from any Ghana Post office or UENR campus.</li>
+      <li>Visit the admissions portal at <a href="https://admissions.uenr.edu.gh" class="text-blue-600 underline">admissions.uenr.edu.gh</a></li>
+      <li>Fill out the online application form carefully.</li>
+      <li>Upload all required documents (certificates, passport photo, etc).</li>
+      <li>Submit the form and print your confirmation slip.</li>
+    </ol>
+    <a href="https://admissions.uenr.edu.gh" target="_blank">
+      <button class="mt-8 bg-green-700 hover:bg-green-800 text-white py-3 px-6 rounded-full text-lg transition">Apply Now</button>
+    </a>
+  </section>
+
+  <!-- Help Section -->
+  <section class="bg-gray-100 py-16 px-6 text-center">
+    <h2 class="text-3xl font-bold text-green-700 mb-4">Need Help?</h2>
+    <p class="text-lg max-w-2xl mx-auto mb-6">For assistance, contact the Admissions Office at:</p>
+    <p class="text-lg font-semibold">📞 +233 35 229 0383 &nbsp;&nbsp; | &nbsp;&nbsp; 📧 admissions@uenr.edu.gh</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-green-800 text-white py-8 text-center">
+    <p>&copy; {{ new Date().getFullYear() }} University of Energy and Natural Resources</p>
+  </footer>
+
+</body>
+</html>

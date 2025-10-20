@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-primary">Projects Bought Today</h2>
+
+    {% if payments %}
+        <div class="row">
+            {% for payment in payments %}
+                <div class="col-md-6 mb-4"> 
+                    <div class="card shadow-sm border-0">
+                        
+                        <div class="card-body"> 
+                            <h4 class="card-title text-primary">{{ payment.project.name }}</h4>
+                            <p><strong>Uploader:</strong> {{ payment.project.uploaded_by.username }}</p>
+                            <p><strong>Uploader Contact:</strong> {{ payment.project.uploaded_by.phone }}</p>
+                            <p><strong>Category:</strong> {{ payment.project.category }}</p>
+                            <p><strong>Course:</strong> {{ payment.project.course }}</p>
+                            <p><strong>Description:</strong> {{ payment.project.description|truncatewords:20 }}</p>
+                            <p><strong>Price:</strong> GHS {{ payment.amount }}</p>
+                            <p><strong>Transaction ID:</strong> {{ payment.transaction_id }}</p>
+                            <p><strong>Purchased On:</strong> {{ payment.payment_date|date:"M d, Y H:i" }}</p>
+                            <strong class="d-flex justify-content-center"> Buyer</strong>
+                            <p><strong>Bought By:</strong> {{ payment.bought_by.username }}</p>
+                            <p><strong>buyer number:</strong> {{ payment.bought_by.phone }}</p>
+                            <span class="badge bg-success">Paid</span>
+                        </div> 
+                    </div> 
+                </div> 
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            No projects bought today.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

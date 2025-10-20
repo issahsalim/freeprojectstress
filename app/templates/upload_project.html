@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Project - ProjectHub</title>
+
+    <!-- Combined CSS imports -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #333;
+            --text-light: #64748b;
+            --bg: #f5f7fa;
+            --card-bg: white;
+            --border: #e0e6ed;
+        }
+
+        .dark-mode {
+            --primary: #4cc9f0;
+            --text: #f8f9fa;
+            --text-light: #adb5bd;
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --border: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0f0f1e;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 1rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            margin: 0 8px;
+            padding: 8px 16px !important;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .upload-container {
+            min-height: 100vh;
+            padding: 100px 0 50px;
+        }
+
+        .upload-card {
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .agreement-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .upload-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        #threejs-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--secondary), #2a075f);
+            color: white;
+            padding: 1.5rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'project_page' %}">
+                <i class="fas fa-graduation-cap me-2"></i>ProjectHub
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/project_page' %}active{% endif %}"
+                                href="{% url 'project_page' %}">
+                                <i class="fas fa-project-diagram me-1"></i> Projects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/receipt' %}active{% endif %}"
+                                href="{% url 'receipt' %}">
+                                <i class="fas fa-receipt me-1"></i> Receipts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/upload_project' %}active{% endif %} "
+                                href="{% url 'upload_project' %}">
+                                <i class="fas fa-upload me-1"></i> Upload
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/my_uploaded_projects' %}active{% endif %}"
+                                href="{% url 'my_uploaded_projects' %}">
+                                <i class="fas fa-receipt me-1"></i>myprojects
+                            </a>
+                        </li>
+                    </ul>
+                    <!--user profile  -->
+                    <div class="dropdown ms-auto">
+                        <a class="btn dropdown-toggle d-flex align-items-center text-white" href="#" role="button"
+                            id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if request.user.profile_pic %}
+                            <img src="{{ request.user.profile_pic.url }}" alt="Profile" width="32" height="32"
+                                class="rounded-circle me-2">
+                            {% else %}
+                            <div class="profile-placeholder rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
+                                style="width: 32px; height: 32px;">
+                                {{ request.user.username|first|upper }}
+                            </div>
+                            {% endif %}
+                            <span class="d-none d-lg-inline text-white">{{ request.user.username }}</span>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user-edit me-2"></i>My profile
+                                </a></li>
+                            <li><a class="dropdown-item" href="{% url 'edit_profile' %}">
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                                </a></li>
+
+                            <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                        </ul>
+                    </div>
+
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="{% url 'signup' %}" class="btn btn-light">
+                        <i class="fas fa-user-plus me-1"></i> Sign Up
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="mt-4" style="padding-top: 80px; flex: 1;">
+        <div class="container">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="upload-container">
+        <div id="three-container"></div>
+
+        <div class="container">
+            <div class="text-center text-white mb-5">
+                <h1 class="display-4 fw-bold">Upload Your Project</h1>
+                <p class="lead">Share your amazing work with the community</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="upload-card">
+                        <form method="post" enctype="multipart/form-data" id="project-upload-form">
+                            {% csrf_token %}
+
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Please correct the following errors:</strong>
+                                <ul class="mb-0 mt-2">
+                                    {% for field in form %}
+                                    {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Project Name</label>
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Price ($)</label>
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Category</label>
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Course</label>
+                                        {{ form.course }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                {{ form.description }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Technology Stack (optional)</label>
+                                {{ form.tech_stack }}
+                                <div class="form-text">e.g., Python, Django, React, PostgreSQL</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Key Features (optional)</label>
+                                {{ form.features }}
+                                <div class="form-text">List the main features of your project</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Demo Link (optional)</label>
+                                {{ form.demo_link }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Project File</label>
+                                {{ form.file }}
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Project Image 1 (optional)</label>
+                                        {{ form.projectImage1 }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Project Image 2 (optional)</label>
+                                        {{ form.projectImage2 }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Project Image 3 (optional)</label>
+                                        {{ form.projectImage3 }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="agreement-box">
+                                <h5>Terms & Conditions</h5>
+                                <div class="agreement-text">
+                                    <p>By uploading this project, you agree to the following terms:</p>
+                                    <ul>
+                                        {% for agreements in agreement%}
+                                            <li> {{agreements.agreementInfo}} </li>
+                                        {%endfor%} 
+                                        
+                                    </ul>
+                                    <p><strong>Please read these terms carefully before proceeding.</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    {{ form.agreement }}
+                                    <label class="form-check-label text-white" for="{{ form.agreement.id_for_label }}">
+                                        I have read and agree to the terms and conditions
+                                    </label>
+                                    {% if form.agreement.errors %}
+                                    <div class="text-danger small">{{ form.agreement.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <button type="submit" id="uploadBtn" class="upload-btn" disabled>
+                                <i class="fas fa-upload me-2"></i>Upload Project
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-4">
+        <p>&copy; {% now "Y" %} ProjectHub. All rights reserved.</p>
+        <p class="mb-0">Empowering students with quality final year projects</p>
+    </footer>
+
+    <!-- Combined JS imports -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Agreement checkbox functionality - FIXED
+        document.addEventListener('DOMContentLoaded', function () {
+            initThree();
+            // Target the Django form agreement checkbox
+            const agreementCheck = document.getElementById('{{ form.agreement.id_for_label }}');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const form = document.getElementById('project-upload-form');
+
+            // Initially disable the button
+            uploadBtn.disabled = true;
+
+            // Enable/disable upload button based on checkbox
+            if (agreementCheck) {
+                agreementCheck.addEventListener('change', function () {
+                    uploadBtn.disabled = !this.checked;
+                });
+
+                // Also check on page load if checkbox is already checked
+                uploadBtn.disabled = !agreementCheck.checked;
+            }
+
+            // Form validation
+            form.addEventListener('submit', function (e) {
+                if (!agreementCheck.checked) {
+                    e.preventDefault();
+                    agreementCheck.classList.add('is-invalid');
+                } else {
+                    agreementCheck.classList.remove('is-invalid');
+                }
+            });
+            // Three.js background animation
+
+
+            // Navbar scroll effect
+            window.addEventListener('scroll', function () {
+                const navbar = document.querySelector('.navbar');
+                navbar.classList.toggle('navbar-scrolled', window.scrollY > 50);
+            });
+        });
+
+        function initThreeJS() {
+            const container = document.getElementById('threejs-container');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create floating geometric shapes
+            const geometry = new THREE.IcosahedronGeometry(1, 0);
+            const material = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.1,
+                wireframe: true
+            });
+
+            const shapes = [];
+            const shapeCount = 8;
+
+            for (let i = 0; i < shapeCount; i++) {
+                const shape = new THREE.Mesh(geometry, material);
+                shape.position.x = Math.random() * 20 - 10;
+                shape.position.y = Math.random() * 20 - 10;
+                shape.position.z = Math.random() * 10 - 20;
+                shape.scale.setScalar(Math.random() * 2 + 0.5);
+                scene.add(shape);
+                shapes.push(shape);
+            }
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            camera.position.z = 5;
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                shapes.forEach((shape, index) => {
+                    shape.rotation.x += 0.01;
+                    shape.rotation.y += 0.005;
+                    shape.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', function () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+
+        function initThree() {
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('three-container').appendChild(renderer.domElement);
+
+            // Particles
+            const particleCount = 1000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                // Position
+                positions[i] = (Math.random() - 0.5) * 50;
+                positions[i + 1] = (Math.random() - 0.5) * 50;
+                positions[i + 2] = (Math.random() - 0.5) * 50;
+
+                // Color
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.2 + 0.5, 0.8, 0.5);
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize, false);
+
+            // Start animation
+            animate();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            particles.rotation.x += 0.0005;
+            particles.rotation.y += 0.001;
+
+            renderer.render(scene, camera);
+        }
+
+
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,741 @@
+{% extends 'base.html' %}
+
+{%block title%}Projects{%endblock%}
+
+{% block content %}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    :root {
+        --primary: #4361ee;
+        --primary-dark: #3a0ca3;
+        --text: #333;
+        --text-light: #64748b;
+        --bg: #f5f7fa;
+        --card-bg: white;
+        --border: #e0e6ed;
+        --shadow: rgba(0, 0, 0, 0.05);
+        --shadow-hover: rgba(0, 0, 0, 0.1);
+    }
+
+    .dark-mode {
+        --primary: #4cc9f0;
+        --primary-dark: #4895ef;
+        --text: #f8f9fa;
+        --text-light: #adb5bd;
+        --bg: #121212;
+        --card-bg: #1e1e1e;
+        --border: #2d2d2d;
+        --shadow: rgba(0, 0, 0, 0.2);
+        --shadow-hover: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        justify-content: center;
+    }
+
+    .tab {
+        padding: 12px 24px;
+        background: var(--card-bg);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        box-shadow: 0 2px 5px var(--shadow);
+        transition: all 0.3s ease;
+        color: var(--text);
+    }
+
+    .tab.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .tab:hover:not(.active) {
+        background: rgba(67, 97, 238, 0.1);
+    }
+
+    .content-section {
+        display: none;
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 5px 15px var(--shadow);
+        margin-bottom: 30px;
+    }
+
+    .content-section.active {
+        display: block;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    h2 i {
+        color: #4a6ee0;
+    }
+
+    h3 {
+        font-size: 18px;
+        margin: 15px 0 10px;
+        color: var(--primary);
+    }
+
+    .filter-item {
+        background: rgba(67, 97, 238, 0.1);
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text);
+    }
+
+    .filter-item.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .filter-item:hover:not(.active) {
+        background: rgba(67, 97, 238, 0.2);
+    }
+
+    .rating {
+        background: #ffd166;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .project-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .project-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px var(--shadow);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border);
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px var(--shadow-hover);
+    }
+
+    .project-image {
+        height: 160px;
+        overflow: hidden;
+        background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+    }
+
+    .project-content {
+        padding: 20px;
+    }
+
+    .project-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--primary-dark);
+    }
+
+    .project-description {
+        color: var(--text-light);
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .project-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .project-price {
+        font-weight: 600;
+        color: var(--primary-dark);
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--primary-dark);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background-color: #f9f9f9;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4a6ee0;
+        box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.1);
+        background-color: white;
+    }
+
+
+    input,
+    textarea,
+    select {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        color: var(--text);
+        font-size: 14px;
+    }
+
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #4a6ee0;
+    }
+
+    .submit-btn {
+        background: var(--primary);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 110, 224, 0.3);
+    }
+
+    .required::after {
+        content: " *";
+        color: #e74c3c;
+    }
+
+    .form-note {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+        font-size: 14px;
+    }
+
+
+    .category {
+        font-size: 0.75rem;
+        line-height: 1rem;
+        border-radius: 9999px;
+        align-items: center;
+        padding: 4px 10px;
+        background-color: var(--primary);
+        display: inline-flex;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .submit-btn:hover {
+        background: var(--primary-dark);
+    }
+
+    .threejs-container {
+        width: 100%;
+        height: 250px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        position: relative;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    #threejs-canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .canvas-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .canvas-overlay h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .canvas-overlay p {
+        font-size: 1.1rem;
+        max-width: 600px;
+    }
+
+    @media (max-width: 768px) {
+        .project-list {
+            grid-template-columns: 1fr;
+        }
+
+        .canvas-overlay h1 {
+            font-size: 1.8rem;
+        }
+
+        .canvas-overlay p {
+            font-size: 0.9rem;
+            padding: 0 15px;
+        }
+
+        .form-container {
+            padding: 25px;
+        }
+
+        .checkbox-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+
+    .nav-item{
+        font-size: small;
+    }
+</style>
+
+<div class=" mt-5">
+    <!-- Three.js Animation Container --> 
+    <div class="threejs-container">
+        <div id="threejs-canvas"></div>
+        <div class="canvas-overlay">
+            <h1>Final Year Projects Marketplace</h1>
+            <p>Discover premium final year projects or get custom solutions built by expert developers</p>
+        </div>
+    </div>
+
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="marketplace">Project Marketplace</div>
+        {%if request.user.is_authenticated%}
+        <div class="tab" data-tab="custom">Custom Projects</div>
+        {%endif%}
+    </div>
+
+    <!-- Project Marketplace Section -->
+    <div class="content-section active" id="marketplace">
+
+        <h2 class="">
+            <i class="fas fa-store">
+
+            </i> Available Projects
+        </h2>
+        <div class="mb-4" style="width: 190px;">
+
+            <form method="get" action=""> 
+                <select name="course" onchange="this.form.submit()">
+                    <option value="">All Courses</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}" {% if course.id|stringformat:"s" == selected_course%}selected{%endif%}>
+                        {{ course.name }}
+                    </option> 
+                    {% endfor %}
+                </select> 
+            </form>
+        </div>
+
+  
+        <!-- Projects-->
+        <div class="project-list">
+            {% if not availiable_project_in_sch.sch_already_downlaod %}
+            {% for project in availiable_project_in_sch %}
+            <div class="project-card">
+                <div class="project-image">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="project-content">
+                    <div class="d-flex justify-content-between">
+                        <div class="category"> {{project.projects.category}} </div>
+                        <div class="category bg-dark"> {{project.projects.course}} </div>
+                    </div>
+                    <h3 class="project-title"> {{project.projects.name}} </h3>
+                    <p class="project-description"> {{project.projects.description}} </p>
+                    
+                    <div class="project-meta">
+                        <div class="project-price"> ${{project.projects.price}} </div>
+                        <a href="{%url 'project_details' project.projects.id %}" class="btn btn-primary"> view
+                            details</a>
+                    </div>
+                </div>
+            </div>
+            {%empty%}
+            <p class="text-center">No Available Project</p>
+            {%endfor%} 
+            {%else%}
+            <div class="text-center"> {{availiable_project_in_sch.sch_already_downlaod.projects.name}} </div>
+            {%endif%}
+        </div>
+
+    </div>
+    
+
+    <!-- Custom Projects Section -->
+
+    <div class="content-section" id="custom">
+        <h2><i class="fas fa-lightbulb"></i> Request Custom Project</h2>
+
+        <form id="customProjectForm" method="POST">
+            {% csrf_token %}
+
+            <!-- Project Title Field -->
+            <div class="form-group">
+                <label for="id_project_title" class="required">Project Title</label>
+                {{ form.project_title }}
+                {% if form.project_title.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.project_title.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Project Category Field -->
+            <div class="form-group">
+                <label class="required">Project Category</label>
+                {{ form.project_category }}
+                {% if form.project_category.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.project_category.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Project Description Field -->
+            <div class="form-group">
+                <label for="id_project_description" class="required">Project Description</label>
+                {{ form.project_description }}
+                {% if form.project_description.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.project_description.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Technologies Field -->
+            <div class="form-group">
+                <label for="id_Technologies">Technologies (Optional)</label>
+                {{ form.Technologies }}
+                {% if form.Technologies.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.Technologies.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Estimated Budget Field -->
+            <div class="form-group">
+                <label for="id_estimated_budget" class="required">Estimated Budget ($)</label>
+                {{ form.estimated_budget }}
+                {% if form.estimated_budget.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.estimated_budget.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Deadline Field -->
+            <div class="form-group">
+                <label for="id_deadline" class="required">Desired Deadline</label>
+                {{ form.deadline }}
+                {% if form.deadline.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.deadline.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Contact Info Field -->
+            <div class="form-group">
+                <label for="id_contact_info" class="required">Contact Information</label>
+                {{ form.contact_info }}
+                {% if form.contact_info.errors %}
+                <div class="error-message" style="color: #e74c3c; font-size: 14px; margin-top: 5px;">
+                    {{ form.contact_info.errors }}
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> Submit Request
+            </button>
+
+            <p class="form-note">Fields marked with * are required</p>
+        </form>
+    </div>
+   
+</div>
+
+<script>
+
+    // Three.js initialization
+    function initThreeJS() {
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(document.getElementById('threejs-canvas').offsetWidth,
+            document.getElementById('threejs-canvas').offsetHeight);
+        document.getElementById('threejs-canvas').appendChild(renderer.domElement);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        // Create floating geometric shapes
+        const geometries = [
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.SphereGeometry(0.7, 32, 32),
+            new THREE.ConeGeometry(0.6, 1.5, 8),
+            new THREE.TorusGeometry(0.8, 0.3, 16, 100),
+            new THREE.CylinderGeometry(0.6, 0.6, 1.2, 32)
+        ];
+
+        const materials = [
+            new THREE.MeshPhongMaterial({ color: 0x4361ee, shininess: 100 }),
+            new THREE.MeshPhongMaterial({ color: 0x3a0ca3, shininess: 100 }),
+            new THREE.MeshPhongMaterial({ color: 0x7209b7, shininess: 100 }),
+            new THREE.MeshPhongMaterial({ color: 0xf72585, shininess: 100 }),
+            new THREE.MeshPhongMaterial({ color: 0x4cc9f0, shininess: 100 })
+        ];
+
+        const objects = [];
+        const objectCount = 15;
+
+        for (let i = 0; i < objectCount; i++) {
+            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+            const material = materials[Math.floor(Math.random() * materials.length)];
+            const object = new THREE.Mesh(geometry, material);
+
+            object.position.x = (Math.random() - 0.5) * 10;
+            object.position.y = (Math.random() - 0.5) * 10;
+            object.position.z = (Math.random() - 0.5) * 10;
+            object.rotation.x = Math.random() * Math.PI;
+            object.rotation.y = Math.random() * Math.PI;
+
+            // Add some animation properties
+            object.userData = {
+                speed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                },
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                }
+            };
+
+            scene.add(object);
+            objects.push(object);
+        }
+
+        // Camera position
+        camera.position.z = 5;
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate objects
+            objects.forEach(object => {
+                object.position.x += object.userData.speed.x;
+                object.position.y += object.userData.speed.y;
+                object.position.z += object.userData.speed.z;
+
+                object.rotation.x += object.userData.rotationSpeed.x;
+                object.rotation.y += object.userData.rotationSpeed.y;
+                object.rotation.z += object.userData.rotationSpeed.z;
+
+                // Bounce off boundaries
+                if (Math.abs(object.position.x) > 5) object.userData.speed.x *= -1;
+                if (Math.abs(object.position.y) > 5) object.userData.speed.y *= -1;
+                if (Math.abs(object.position.z) > 5) object.userData.speed.z *= -1;
+            });
+
+            // Slowly rotate camera
+            camera.position.x = Math.sin(Date.now() * 0.0003) * 5;
+            camera.position.z = Math.cos(Date.now() * 0.0003) * 5;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = document.getElementById('threejs-canvas').offsetWidth /
+                document.getElementById('threejs-canvas').offsetHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(document.getElementById('threejs-canvas').offsetWidth,
+                document.getElementById('threejs-canvas').offsetHeight);
+        });
+    }
+
+    // Initialize Three.js when the page loads
+    window.addEventListener('load', initThreeJS);
+
+    // Tab switching functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            // Hide all content sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show the corresponding content section
+            const tabId = tab.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+
+    });
+
+
+</script>
+
+{%endblock%}

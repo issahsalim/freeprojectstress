@@ -1,0 +1,55 @@
+{%extends 'base.html' %}
+{%block title %}receipts {%endblock%}
+{%block content %}
+
+
+<style>
+    body {
+        font-family: DejaVu Sans, Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    .wrap {
+        padding: 20px;
+        border: 1px solid #ddd;
+        width: 100%;
+        max-width: 640px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .row {
+        margin: 8px 0;
+    }
+
+    .label {
+        font-weight: 600;
+        display: inline-block;
+        width: 150px;
+    }
+</style>
+
+<div class="wrap">
+    <h1>Payment Receipt</h1>
+    {% for payment in receipt %}
+    <div class="row"><span class="label">Transaction:</span> {{ payment.transaction_id }}</div>
+    <div class="row"><span class="label">Name:</span> {{ payment.bought_by.username }} </div>
+    <div class="row"><span class="label">Email:</span> {{ payment.bought_by.email }}</div>
+    <div class="row"><span class="label">Project:</span> {{ payment.project.name }}</div>
+    <div class="row"><span class="label">Amount:</span> GH₵ {{ payment.amount }}</div> 
+    <div class="row"><span class="label">Owner:</span>  {{ payment.project.uploaded_by.username }}</div>
+    <div class="row"><span class="label">Owner number:</span>  {{ payment.project.uploaded_by.phone}}</div>
+    <div class="row"><span class="label">Owner Email:</span>  {{ payment.project.uploaded_by.email}}</div>
+    <div class="row"><span class="label">Date:</span> {{ payment.payment_date|date:"Y-m-d H:i:s" }}</div>
+    <p>Thank you for your payment.</p> 
+    <a href="{%url 'download_receipt' payment.id %}">Downlaod</a>
+    <hr/>   
+    {%empty%}
+    <h3>Nothing bought yet.</h3>
+    {%endfor%}
+
+</div>
+{%endblock%}
