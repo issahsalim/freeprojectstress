@@ -300,16 +300,16 @@ def upload_project(request):
             project = form.save(commit=False)
             project.uploaded_by = request.user
             project_name=request.POST['name']
-              
-            project.save()
-            try:
+            
+            project.save() 
+            try:   
                 send_mail(
                         subject="A new project",
                         message=f"A new project has been uploaded project name {project_name}",
                         from_email=f"Project Upload <{settings.EMAIL_HOST_USER}>",
                         recipient_list=[settings.EMAIL_HOST_USER],
                         fail_silently=False 
-                )
+                ) 
             except BadHeaderError as e:
                 messages.error(request,f"Error occur {e}")
                 return redirect('project_page') 
@@ -317,12 +317,12 @@ def upload_project(request):
             except smtplib.SMTPException as e:
                 messages.error(request,f"{e} error occur")
                 return redirect('project_page')
-            
+                
             except Exception as e:
                 print(e) 
             messages.success(request, 'Project uploaded successfully! We will notify you when it approved. Thank You')
             return redirect('project_page')
-              
+            
         else: 
             messages.error(request, 'Please correct the errors below.')
             return redirect('upload_project') 
