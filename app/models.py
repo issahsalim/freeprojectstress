@@ -58,7 +58,7 @@ class CustomProjects(models.Model):
     project_description=models.TextField()
     project_category=models.ForeignKey(projectcategory,on_delete=models.CASCADE) 
     Technologies=models.CharField(max_length=50,) 
-    estimated_budget=models.DecimalField(decimal_places=2, max_digits=100) 
+    estimated_budget=models.DecimalField(decimal_places=2, max_digits=10) 
     deadline=models.DateField()  
     contact_info=models.CharField(max_length=50) 
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)  
